@@ -22,41 +22,51 @@ public class FoodItemServiceImpl implements FoodItemService {
 
     @Override
     public FoodItem updateFoodItem(int id, FoodItem foodItem) {
-        return null;
+        FoodItem existingFoodItem = foodItemRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("FoodItem not found"));
+        existingFoodItem.setName(foodItem.getName());
+        existingFoodItem.setDescription(foodItem.getDescription());
+        existingFoodItem.setPrice(foodItem.getPrice());
+        existingFoodItem.setMealType(foodItem.getMealType());
+        existingFoodItem.setCuisineType(foodItem.getCuisineType());
+        existingFoodItem.setStarRating(foodItem.getStarRating());
+        existingFoodItem.setAvailable(foodItem.isAvailable());
+        return foodItemRepository.save(existingFoodItem);
     }
 
     @Override
     public void deleteFoodItem(int id) {
-
+        foodItemRepository.deleteById(id);
     }
 
     @Override
     public FoodItem getFoodItemById(int id) {
-        return null;
+        return foodItemRepository.findById(id).
+                orElseThrow(()-> new RuntimeException("FoodItem not found"));
     }
 
     @Override
     public List<FoodItem> getAllFoodItems() {
-        return List.of();
+        return foodItemRepository.findAll();
     }
 
     @Override
     public List<FoodItem> getFoodItemsByRestaurant(int restaurantId) {
-        return List.of();
+        return foodItemRepository.findByRestaurantId(restaurantId);
     }
 
     @Override
     public List<FoodItem> getFoodItemsByMealType(MealType mealType) {
-        return List.of();
+        return foodItemRepository.findByMealType(mealType);
     }
 
     @Override
     public List<FoodItem> getFoodItemsByCuisineType(CuisineType cuisineType) {
-        return List.of();
+        return foodItemRepository.findByCuisineType(cuisineType);
     }
 
     @Override
     public List<FoodItem> getAvailableFoodItems() {
-        return List.of();
+        return foodItemRepository.findByIsAvailableTrue();
     }
 }
