@@ -32,4 +32,12 @@ public class User {
     private boolean isVerified;
     private String otp;
     private LocalDateTime tokenExpiration;
+
+    //Just for auth Service demo purpose
+    public User(String demoUser, String mail, String password) {
+        this.name = demoUser;
+        this.email = mail;
+        this.password = password;
+
+    }
 }
