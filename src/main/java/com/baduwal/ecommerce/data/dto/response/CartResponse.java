@@ -15,8 +15,8 @@ public class CartResponse {
 
     public static class CartItemDto {
         public Long itemId;
-        public Long productId;
-        public String productName;
+        public Long foodItemId;
+        public String foodName;
         public Integer quantity;
         public BigDecimal totalPrice;
     }
