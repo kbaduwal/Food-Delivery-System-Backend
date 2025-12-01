@@ -6,8 +6,12 @@ import com.baduwal.ecommerce.data.enums.MealType;
 import com.baduwal.ecommerce.repo.FoodItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FoodItemServiceImpl implements FoodItemService {
@@ -16,12 +20,19 @@ public class FoodItemServiceImpl implements FoodItemService {
     private FoodItemRepository foodItemRepository;
 
     @Override
-    public FoodItem createFoodItem(FoodItem foodItem) {
+    public FoodItem createFoodItem(FoodItem foodItem, MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            String path = "uploads/" + file.getOriginalFilename();
+            File dest = new File(path);
+            dest.getParentFile().mkdirs();
+            file.transferTo(dest);
+            foodItem.setImageUrl(path);
+        }
         return foodItemRepository.save(foodItem);
     }
 
     @Override
-    public FoodItem updateFoodItem(int id, FoodItem foodItem) {
+    public FoodItem updateFoodItem(Long id, FoodItem foodItem) {
         FoodItem existingFoodItem = foodItemRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("FoodItem not found"));
         existingFoodItem.setName(foodItem.getName());
@@ -35,14 +46,13 @@ public class FoodItemServiceImpl implements FoodItemService {
     }
 
     @Override
-    public void deleteFoodItem(int id) {
+    public void deleteFoodItem(Long id) {
         foodItemRepository.deleteById(id);
     }
 
     @Override
-    public FoodItem getFoodItemById(int id) {
-        return foodItemRepository.findById(id).
-                orElseThrow(()-> new RuntimeException("FoodItem not found"));
+    public Optional<FoodItem> getFoodItemById(Long id) {
+        return foodItemRepository.findById(id);
     }
 
     @Override
@@ -69,4 +79,38 @@ public class FoodItemServiceImpl implements FoodItemService {
     public List<FoodItem> getAvailableFoodItems() {
         return foodItemRepository.findByIsAvailableTrue();
     }
+
+    @Override
+    public List<FoodItem> searchFoodItems(String keyword) {
+        return foodItemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+    }
+
+    @Override
+    public List<FoodItem> filterFoodItems(Integer restaurantId, Long categoryId, CuisineType cuisineType, MealType mealType) {
+        if (restaurantId != null){
+            if (mealType != null && cuisineType != null) {
+                return foodItemRepository.findByRestaurantIdAndMealTypeAndCuisineType(restaurantId,mealType,cuisineType);
+            }
+            if (mealType != null){
+                return foodItemRepository.findByRestaurantIdAndMealType(restaurantId, mealType);
+            }
+            if (cuisineType != null) {
+                return foodItemRepository.findByRestaurantIdAndCuisineType(restaurantId, cuisineType);
+            }
+            return foodItemRepository.findByRestaurantId(restaurantId);
+        }
+
+        if (categoryId != null) {
+            if (cuisineType != null && mealType != null) {
+                return foodItemRepository.findByCategoryIdAndCuisineTypeAndMealType(categoryId, cuisineType, mealType);
+            }
+            if (cuisineType != null) {
+                return foodItemRepository.findByCategoryIdAndCuisineType(categoryId, cuisineType);
+            }
+            return foodItemRepository.findByCategoryId(categoryId);
+        }
+
+        return foodItemRepository.findAll();
+    }
+
 }

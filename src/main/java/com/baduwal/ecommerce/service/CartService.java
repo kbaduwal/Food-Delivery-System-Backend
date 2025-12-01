@@ -85,4 +85,8 @@ public class CartService {
         return cartResponse;
     }
 
+    public void clearCart(){
+        cartRepository.deleteAll();
+    }
+
 }

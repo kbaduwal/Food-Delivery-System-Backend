@@ -11,10 +11,20 @@ import java.util.List;
 @Repository
 public interface FoodItemRepository extends JpaRepository<FoodItem, Long> {
     List<FoodItem> findByRestaurantId(Integer restaurantId);
+    List<FoodItem> findByRestaurantIdAndMealType(Integer restaurantId, MealType mealType);
+    List<FoodItem> findByRestaurantIdAndCuisineType(Integer restaurantId, CuisineType cuisineType);
+    List<FoodItem> findByRestaurantIdAndMealTypeAndCuisineType(Integer restaurantId, MealType mealType, CuisineType cuisineType);
+
+    List<FoodItem> findByCategoryId(Long categoryId);
+    List<FoodItem> findByCategoryIdAndCuisineType(Long categoryId, CuisineType cuisineType);
+    List<FoodItem> findByCategoryIdAndCuisineTypeAndMealType(Long categoryId, CuisineType cuisineType, MealType mealType);
+
 
     List<FoodItem> findByMealType(MealType mealType);
 
     List<FoodItem> findByCuisineType(CuisineType cuisineType);
 
     List<FoodItem> findByIsAvailableTrue();
+
+    List<FoodItem> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description);
 }

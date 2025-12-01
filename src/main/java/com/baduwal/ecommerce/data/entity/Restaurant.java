@@ -47,4 +47,7 @@ public class Restaurant {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
+
+    @OneToMany(mappedBy = "restaurant")
+    private List<FoodItem> foodItems;
 }
