@@ -1,22 +1,35 @@
 package com.baduwal.ecommerce.data.entity;
 
 import com.baduwal.ecommerce.data.enums.OrderStatus;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
+@Table(name = "orders")
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Order {
 
-    private final List<CartItem> cartItems;
-    private final int orderId;
-    private final Long userId;
-    private final OrderStatus orderStatus;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
+    private Long userId;
 
-    public Order(List<CartItem> cartItems, int orderId, Long userId, OrderStatus orderStatus) {
-        this.cartItems = cartItems;
-        this.orderId = orderId;
-        this.userId = userId;
-        this.orderStatus = orderStatus;
-    }
+    private BigDecimal totalAmount;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus; //PENDING, CONFIRMED, DELIVERED
+
+    private LocalDateTime createdAt=LocalDateTime.now();
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> items;
+
 }

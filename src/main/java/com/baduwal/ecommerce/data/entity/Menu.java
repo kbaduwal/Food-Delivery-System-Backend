@@ -19,6 +19,8 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //private List<FoodItem> foodItems;
+
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<FoodItem> foodItems;
 
 }
