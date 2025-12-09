@@ -61,15 +61,17 @@ public class CartManager {
 
     }
 
-    private boolean isFoodItemFromSameRestaurant(User user, FoodItem foodItem){
+    private boolean isFoodItemFromSameRestaurant(User user, FoodItem foodItem) {
         List<CartItem> cartItems = getUserCart(user);
-        return cartItems.isEmpty() || (cartItems.get(0).getFoodItem().getRestaurantId()==foodItem.getRestaurantId());
+
+        return cartItems.isEmpty() ||
+                cartItems.get(0).getFood().getRestaurant().equals(foodItem.getRestaurant());
     }
 
     private boolean isFoodItemPresentInCart(User user, FoodItem foodItem){
         List<CartItem> cartItems = getUserCart(user);
         for (CartItem item : cartItems) {
-            if(item.getFoodItem().getId()==foodItem.getId()){
+            if(item.getFood().getId()==foodItem.getId()){
                 return true;
             }
         }

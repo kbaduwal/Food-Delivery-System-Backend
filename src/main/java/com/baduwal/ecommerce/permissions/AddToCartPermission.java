@@ -27,7 +27,7 @@ public class AddToCartPermission implements Permission{
             return false;
         }
 
-        Restaurant restaurant = new RestaurantSearcher().searchById(foodItem.getRestaurantId());
+        Restaurant restaurant = new RestaurantSearcher().searchById(foodItem.getRestaurant().getId());
 
         return deliveryManager.isDeliveryPossible(restaurant.getAddress(),user.getAddress());
     }

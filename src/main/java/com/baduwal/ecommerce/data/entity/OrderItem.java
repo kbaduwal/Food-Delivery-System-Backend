@@ -18,6 +18,8 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long restaurantId; //let us query restaurant-wise orders without expensive joins
+
     private Long foodId;
     private String foodItemName;
 

@@ -48,6 +48,6 @@ public class Restaurant {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<FoodItem> foodItems;
 }

@@ -7,4 +7,5 @@ public interface UserService {
     boolean verifyOtp(String email, String otp);
     boolean setNewPassword(String email, String otp, String newPassword);
     String changePassword(String oldPassword,String newPassword,User user);
+    public void sendOtp(User user);
 }

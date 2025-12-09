@@ -1,55 +1,59 @@
 package com.baduwal.ecommerce.security;
 
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;   // <-- IMPORTANT IMPORT!!!
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private String jwtSecret;
+    private String secret;
 
-    @Value("${jwt.expiration-ms}")
-    private long jwtExpirationMs;
+    @Value("${jwt.expiration:86400000}")
+    private Long expiration;
 
-    // MUST return SecretKey in 0.12.5
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateJwtToken(String userName) {
+    public String generateJwtToken(String email) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expiration);
+
         return Jwts.builder()
-                .subject(userName)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .subject(email)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSigningKey())
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser()
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+                .getPayload();
+        return claims.getSubject();
     }
 
-    public boolean validateJwtToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return false;
         }
     }

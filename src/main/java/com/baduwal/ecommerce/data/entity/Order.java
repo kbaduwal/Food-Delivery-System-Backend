@@ -20,7 +20,10 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+
     private Long userId;
+
+    private Long restaurantId; //If order belongs to the single restaurent
 
     private BigDecimal totalAmount;
 
@@ -32,4 +35,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items;
 
+    public Order(List<CartItem> cartItems, int orderId, Long id, OrderStatus orderStatus) {
+    }
 }
